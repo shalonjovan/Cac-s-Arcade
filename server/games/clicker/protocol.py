@@ -1,0 +1,5 @@
+JOIN = "join"
+CLICK = "click"
+START = "start"
+SCORE = "score"
+END = "end"
