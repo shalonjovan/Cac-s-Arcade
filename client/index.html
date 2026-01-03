@@ -2,9 +2,41 @@
 <html>
 <head>
   <title>Cac's Arcade</title>
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: system-ui;
+      background: linear-gradient(#ffcc8e, #ffb347);
+    }
+
+    input, button {
+      padding: 14px;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
+
+
 <body>
+
   <h1>🎮 Cac's Arcade</h1>
-  <a href="/games/clicker/">🔥 Clicker</a>
+  <input id="name" placeholder="Enter your name" maxlength="16">
+  <button onclick="start()">Start</button>
+
+  <script>
+    function start() {
+      const name = document.getElementById("name").value.trim();
+      if (!name) return;
+
+      localStorage.setItem("playerName", name);
+      window.location.href = "/games/clicker/";
+    }
+  </script>
+
 </body>
 </html>

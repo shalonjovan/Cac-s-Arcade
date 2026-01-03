@@ -1,7 +1,4 @@
-/* =========================================================
-   RESET
-========================================================= */
-
+/* ================= RESET ================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -13,10 +10,9 @@ html, body {
   height: 100%;
 }
 
-/* =========================================================
-   PAGE LAYOUT
-========================================================= */
 
+
+/* ================= BODY ================= */
 body {
   display: flex;
   flex-direction: column;
@@ -24,19 +20,10 @@ body {
   font-family: system-ui, sans-serif;
   overflow: hidden;
 
-  /* Custom cursor */
   cursor: url("/static/assets/cursor/hand.png") 16 16, pointer;
 }
 
-/* Ensure button also uses cursor */
-.button3d {
-  cursor: url("/static/assets/cursor/hand.png") 16 16, pointer;
-}
-
-/* =========================================================
-   TOP UI
-========================================================= */
-
+/* ================= TOP UI ================= */
 #status {
   text-align: center;
   font-size: 22px;
@@ -50,24 +37,17 @@ body {
   padding: 6px;
 }
 
-/* =========================================================
-   PLAYFIELD
-========================================================= */
-
+/* ================= PLAYFIELD ================= */
 #playfield {
   position: relative;
-  flex: 1;            /* fills remaining screen */
+  flex: 1;
   width: 100%;
   overflow: hidden;
 }
 
-/* =========================================================
-   3D BUTTON
-========================================================= */
-
+/* ================= 3D BUTTON ================= */
 .button3d {
   position: absolute;
-
   padding: 22px 48px;
   font-size: 32px;
   font-weight: bold;
@@ -83,10 +63,9 @@ body {
     0 18px 24px rgba(0,0,0,0.4);
 
   user-select: none;
+  cursor: url("/static/assets/cursor/hand.png") 16 16, pointer;
 
-  transition:
-    transform 0.05s ease,
-    box-shadow 0.05s ease;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
 
 .button3d:active {
@@ -97,11 +76,7 @@ body {
     0 6px 10px rgba(0,0,0,0.3);
 }
 
-/* =========================================================
-   EFFECTS
-========================================================= */
-
-/* Glow */
+/* ================= EFFECTS ================= */
 @keyframes glow {
   0%   { box-shadow: 0 14px 0 #915100, 0 18px 24px rgba(0,0,0,0.4); }
   50%  { box-shadow: 0 14px 0 #915100, 0 0 30px rgba(255,200,80,0.9); }
@@ -112,12 +87,11 @@ body {
   animation: glow 0.4s ease;
 }
 
-/* Shake */
 @keyframes shake {
-  0%   { transform: translate(0,0); }
-  25%  { transform: translate(-2px,2px); }
-  50%  { transform: translate(2px,-2px); }
-  75%  { transform: translate(-2px,-2px); }
+  0% { transform: translate(0,0); }
+  25% { transform: translate(-2px,2px); }
+  50% { transform: translate(2px,-2px); }
+  75% { transform: translate(-2px,-2px); }
   100% { transform: translate(0,0); }
 }
 
@@ -125,7 +99,7 @@ body {
   animation: shake 0.15s linear;
 }
 
-/* Particles */
+/* ================= PARTICLES ================= */
 .particle {
   position: absolute;
   width: 8px;
@@ -143,10 +117,7 @@ body {
   }
 }
 
-/* =========================================================
-   PLAY AGAIN
-========================================================= */
-
+/* ================= PLAY AGAIN ================= */
 #playAgain {
   margin: 12px auto;
   padding: 14px 28px;
