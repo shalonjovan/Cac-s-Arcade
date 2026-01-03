@@ -2,13 +2,21 @@
 <html>
 <head>
   <title>Clicker</title>
+  <link rel="stylesheet" href="/static/games/clicker/style.css">
 </head>
 <body>
-  <h2>Clicker</h2>
-  <div id="status">Waiting...</div>
-  <button id="btn" disabled>CLICK</button>
+
+  <div id="status">Waiting…</div>
+
+  <!-- playfield = area where button can teleport -->
+  <div id="playfield">
+    <div class="button3d" id="clickBtn">
+      CLICK!
+    </div>
+  </div>
+
   <div id="score"></div>
 
-  <script src="game.js"></script>
+  <script src="/static/games/clicker/game.js"></script>
 </body>
 </html>

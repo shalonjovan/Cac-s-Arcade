@@ -1,0 +1,74 @@
+/* ---------- Base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(#ffcc8e, #ffb347);
+  font-family: system-ui, sans-serif;
+  overflow: hidden;
+  cursor: grab;
+}
+
+#status {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+#score {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+/* ---------- Playfield ---------- */
+#playfield {
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - 80px);
+}
+
+/* ---------- 3D BUTTON ---------- */
+.button3d {
+  position: absolute;
+  padding: 22px 48px;
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+
+  background: linear-gradient(#ffa12b, #f78900);
+  border-radius: 12px;
+
+  text-shadow: 0 2px 0 #000;
+  box-shadow:
+    inset 0 2px 0 #ffe5c4,
+    0 14px 0 #915100,
+    0 18px 24px rgba(0,0,0,0.4);
+
+  user-select: none;
+  cursor: pointer;
+
+  transition:
+    transform 0.05s ease,
+    box-shadow 0.05s ease;
+}
+
+/* pressed */
+.button3d:active {
+  transform: translateY(10px);
+  box-shadow:
+    inset 0 2px 0 #ffe5c4,
+    0 4px 0 #915100,
+    0 6px 10px rgba(0,0,0,0.3);
+}
+
+/* desktop hand */
+@media (hover: hover) {
+  body {
+    cursor: pointer;
+  }
+}
