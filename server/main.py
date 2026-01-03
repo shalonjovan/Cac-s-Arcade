@@ -16,26 +16,33 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CLIENT_DIR = BASE_DIR / "client"
 
 # ------------------------------------------------------------------
-# Static files (JS, CSS)
+# Static files
 # ------------------------------------------------------------------
-app.mount("/static", StaticFiles(directory=CLIENT_DIR), name="static")
+# This serves:
+# /static/...  -> JS, CSS, assets
+# /games/...   -> game-specific static files
+app.mount(
+    "/static",
+    StaticFiles(directory=CLIENT_DIR),
+    name="static"
+)
 
 # ------------------------------------------------------------------
-# Arcade lobby
+# Arcade lobby (root)
 # ------------------------------------------------------------------
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def arcade():
     return FileResponse(CLIENT_DIR / "index.html")
 
 # ------------------------------------------------------------------
-# Game pages (e.g. /games/clicker)
+# Game pages (e.g. /games/clicker/)
 # ------------------------------------------------------------------
-@app.get("/games/{game}/")
+@app.get("/games/{game}/", include_in_schema=False)
 async def serve_game(game: str):
-    game_dir = CLIENT_DIR / "games" / game / "index.html"
-    if game_dir.exists():
-        return FileResponse(game_dir)
-    return {"error": "Game not found"}
+    game_index = CLIENT_DIR / "games" / game / "index.html"
+    if game_index.exists():
+        return FileResponse(game_index)
+    return FileResponse(CLIENT_DIR / "index.html")
 
 # ------------------------------------------------------------------
 # WebSocket endpoint (shared for ALL games)
@@ -49,9 +56,11 @@ async def websocket_endpoint(ws: WebSocket):
         while True:
             msg = await ws.receive_json()
 
+            # ----------------------------------------------------------
             # Join request
-            if msg["type"] == "join":
-                game_name = msg["game"]
+            # ----------------------------------------------------------
+            if msg.get("type") == "join":
+                game_name = msg.get("game")
                 game = GAMES.get(game_name)
 
                 if not game:
@@ -59,12 +68,16 @@ async def websocket_endpoint(ws: WebSocket):
                     continue
 
                 room = await try_match(game_name, game, ws)
+
                 if room:
                     for p in room.players:
                         player_room[p] = room
+
                     await game.on_start(room)
 
-            # Game message
+            # ----------------------------------------------------------
+            # Game-specific messages
+            # ----------------------------------------------------------
             else:
                 room = player_room.get(ws)
                 if room:
