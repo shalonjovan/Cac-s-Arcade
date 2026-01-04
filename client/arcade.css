@@ -1,12 +1,12 @@
 :root {
-  --bg: #fff7ed;           /* warm cream */
+  --bg: #fff7ed;
   --text: #2b2b2b;
   --muted: #6b7280;
 
-  --clicker-bg: #ffe8cc;   /* soft orange */
+  --clicker-bg: #ffe8cc;
   --clicker-accent: #ff9f1c;
 
-  --ttt-bg: #e0f2fe;       /* soft sky blue */
+  --ttt-bg: #e0f2fe;
   --ttt-accent: #3b82f6;
 }
 
@@ -14,23 +14,27 @@
   box-sizing: border-box;
 }
 
+/* ---------------- BODY ---------------- */
 body {
   margin: 0;
   min-height: 100vh;
   font-family: system-ui, -apple-system;
   background: var(--bg);
   color: var(--text);
+}
 
+/* ---------------- VISIBILITY ---------------- */
+.hidden {
+  display: none !important;
+}
+
+/* ---------------- LOBBY ---------------- */
+#lobby {
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-.hidden {
-  display: none;
-}
-
-#lobby {
   text-align: center;
 }
 
@@ -48,16 +52,17 @@ p {
   gap: 24px;
   margin-top: 32px;
   max-width: 520px;
+  width: 100%;
 }
 
 .gameCard {
   border-radius: 18px;
   padding: 24px;
   text-align: left;
-
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .gameCard:hover {
@@ -76,7 +81,6 @@ p {
   font-size: 14px;
 }
 
-/* Individual game colors */
 .gameCard.clicker {
   background: var(--clicker-bg);
   border-left: 6px solid var(--clicker-accent);
@@ -93,4 +97,81 @@ p {
   right: 16px;
   font-size: 13px;
   color: var(--muted);
+}
+
+/* ================= NAME SCREEN ================= */
+
+#nameScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000; /* 🔥 KEY FIX */
+
+  background: linear-gradient(#6b7f3f, #4f5f2d);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Title */
+#arcadeTitle {
+  font-size: 56px;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 4px 0 rgba(0,0,0,0.25),
+    0 8px 16px rgba(0,0,0,0.35);
+}
+
+/* White rounded box */
+.nameBox {
+  background: #ffffff;
+  padding: 24px 28px;
+  border-radius: 14px;
+  width: 280px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}
+
+/* Input */
+.nameBox input {
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  text-align: center;
+}
+
+/* Button */
+.nameBox button {
+  padding: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+
+  background: #7ed957;
+  color: #1f3d1a;
+
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);
+}
+
+.nameBox button:hover {
+  transform: translateY(-1px);
+}
+
+.nameBox button:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 0 rgba(0,0,0,0.25);
 }
