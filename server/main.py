@@ -3,7 +3,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from server.core.connection import register, unregister, player_room
+from server.core.connection import register, unregister, player_room, player_game, stats
 from server.core.matchmaking import try_match
 from server.core.registry import GAMES
 
@@ -52,32 +52,38 @@ async def websocket_endpoint(ws: WebSocket):
     await ws.accept()
     await register(ws)
 
+    async def broadcast_stats():
+        payload = {"type": "stats", **stats()}
+        for c in list(player_game.keys()):
+            try:
+                await c.send_json(payload)
+            except:
+                pass
+
+    await broadcast_stats()
+
     try:
         while True:
             msg = await ws.receive_json()
 
-            # ----------------------------------------------------------
-            # Join request
-            # ----------------------------------------------------------
+            # -------------------- JOIN GAME --------------------
             if msg.get("type") == "join":
-                game_name = msg.get("game")
+                game_name = msg["game"]
                 game = GAMES.get(game_name)
 
                 if not game:
-                    await ws.send_json({"error": "invalid_game"})
                     continue
 
-                room = await try_match(game_name, game, ws)
+                player_game[ws] = game_name
+                await broadcast_stats()
 
+                room = await try_match(game_name, game, ws)
                 if room:
                     for p in room.players:
                         player_room[p] = room
-
                     await game.on_start(room)
 
-            # ----------------------------------------------------------
-            # Game-specific messages
-            # ----------------------------------------------------------
+            # -------------------- GAME MESSAGE --------------------
             else:
                 room = player_room.get(ws)
                 if room:
@@ -87,4 +93,6 @@ async def websocket_endpoint(ws: WebSocket):
         room = player_room.get(ws)
         if room:
             await room.game.on_disconnect(room, ws)
+
         await unregister(ws)
+        await broadcast_stats()

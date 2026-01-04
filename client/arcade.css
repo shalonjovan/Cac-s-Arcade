@@ -1,0 +1,29 @@
+body {
+  font-family: system-ui;
+  background: linear-gradient(#ffcc8e, #ffb347);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.hidden { display: none; }
+
+.games {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.gameCard {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 180px;
+  text-align: center;
+}
+
+.gameCard:hover {
+  transform: scale(1.05);
+}
