@@ -6,6 +6,7 @@
 </head>
 <body>
 
+<!-- ================= NAME SCREEN ================= -->
 <div id="nameScreen">
   <h1 id="arcadeTitle">Cac's Arcade</h1>
 
@@ -20,13 +21,24 @@
   </div>
 </div>
 
+<!-- ================= ARCADE LOBBY ================= -->
 <div id="lobby" class="hidden">
-  <h2>Arcade Lobby</h2>
 
-  <p>Total online: <b id="totalOnline">0</b></p>
-  <p>In lobby: <b id="lobbyCount">0</b></p>
+  <div class="crt">
+    <div class="crt-inner">
 
-  <div id="games" class="games"></div>
+      <h1 class="crt-title">Cac's Arcade</h1>
+
+      <div class="stats">
+        <div>Total online: <b id="totalOnline">0</b></div>
+        <div>In lobby: <b id="lobbyCount">0</b></div>
+      </div>
+
+      <div id="games" class="games"></div>
+
+    </div>
+  </div>
+
 </div>
 
 <script src="/static/arcade.js"></script>
