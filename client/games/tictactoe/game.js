@@ -47,16 +47,29 @@ ws.onmessage = (e) => {
 
 function render(board) {
   boardDiv.innerHTML = "";
+
   board.forEach((v, i) => {
     const c = document.createElement("div");
     c.className = "cell";
     c.textContent = v;
+
+    if (v === "X") c.classList.add("x");
+    if (v === "O") c.classList.add("o");
+
     c.onclick = () => {
       if (!myTurn || v) return;
       ws.send(JSON.stringify({ type: "move", index: i }));
     };
+
     boardDiv.appendChild(c);
   });
 }
 
+
 playAgain.onclick = () => location.reload();
+
+const backBtn = document.getElementById("back");
+
+backBtn.onclick = () => {
+  window.location.href = "/";
+};

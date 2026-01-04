@@ -48,11 +48,13 @@ function renderStats(stats) {
     const count = stats.games[g.id] || 0;
 
     const card = document.createElement("div");
-    card.className = "gameCard";
+    card.className = `gameCard ${g.id}`;
     card.innerHTML = `
-      <h3>${g.name}</h3>
-      <p>Players: ${count}</p>
+    <div class="badge">${count} online</div>
+    <h3>${g.name}</h3>
+    <p>Click to play</p>
     `;
+
 
     card.onclick = () => {
       window.location.href = `/games/${g.id}/`;

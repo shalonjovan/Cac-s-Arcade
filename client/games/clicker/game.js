@@ -137,12 +137,19 @@ btn.addEventListener("click", (e) => {
 });
 
 /* =========================================================
-   PLAY AGAIN
+   PLAY AGAIN && BACK TO ARCADE
 ========================================================= */
 
 playAgainBtn.onclick = () => {
   if (ws) ws.close();
   connect();
+};
+
+
+const backBtn = document.getElementById("backBtn");
+
+backBtn.onclick = () => {
+  window.location.href = "/";
 };
 
 /* =========================================================

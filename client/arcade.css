@@ -1,29 +1,96 @@
+:root {
+  --bg: #fff7ed;           /* warm cream */
+  --text: #2b2b2b;
+  --muted: #6b7280;
+
+  --clicker-bg: #ffe8cc;   /* soft orange */
+  --clicker-accent: #ff9f1c;
+
+  --ttt-bg: #e0f2fe;       /* soft sky blue */
+  --ttt-accent: #3b82f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: system-ui;
-  background: linear-gradient(#ffcc8e, #ffb347);
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system;
+  background: var(--bg);
+  color: var(--text);
+
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
-.hidden { display: none; }
-
-.games {
-  display: flex;
-  gap: 20px;
-  margin-top: 20px;
+.hidden {
+  display: none;
 }
 
-.gameCard {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  width: 180px;
+#lobby {
   text-align: center;
 }
 
+h2 {
+  font-weight: 600;
+}
+
+p {
+  color: var(--muted);
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+  max-width: 520px;
+}
+
+.gameCard {
+  border-radius: 18px;
+  padding: 24px;
+  text-align: left;
+
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
 .gameCard:hover {
-  transform: scale(1.05);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 30px rgba(0,0,0,0.12);
+}
+
+.gameCard h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.gameCard p {
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+/* Individual game colors */
+.gameCard.clicker {
+  background: var(--clicker-bg);
+  border-left: 6px solid var(--clicker-accent);
+}
+
+.gameCard.tictactoe {
+  background: var(--ttt-bg);
+  border-left: 6px solid var(--ttt-accent);
+}
+
+.badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 13px;
+  color: var(--muted);
 }
