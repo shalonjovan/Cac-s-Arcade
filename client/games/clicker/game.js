@@ -5,7 +5,6 @@
 const playerName = localStorage.getItem("playerName");
 
 if (!playerName) {
-  // User opened game directly — redirect to arcade
   window.location.href = "/";
 }
 
@@ -25,8 +24,14 @@ const status       = document.getElementById("status");
 const score        = document.getElementById("score");
 const playfield    = document.getElementById("playfield");
 const playAgainBtn = document.getElementById("playAgain");
+const backBtn      = document.getElementById("backBtn");
 
+/* =========================================================
+   INITIAL UI STATE
+========================================================= */
 
+backBtn.classList.remove("hidden");   // visible while waiting
+playAgainBtn.classList.add("hidden");
 
 /* =========================================================
    WEBSOCKET
@@ -46,9 +51,12 @@ function connect() {
       name: playerName
     }));
 
+    active = false;
     status.textContent = "Waiting for opponent…";
     score.textContent = "";
+
     playAgainBtn.classList.add("hidden");
+    backBtn.classList.remove("hidden"); // ✅ allowed to leave
   };
 
   ws.onmessage = (e) => {
@@ -57,19 +65,29 @@ function connect() {
     if (msg.type === "start") {
       active = true;
       status.textContent = "GO!";
+
+      playAgainBtn.classList.add("hidden");
+      backBtn.classList.add("hidden"); // 🔥 hide during match
+
       teleport();
     }
 
     if (msg.type === "end") {
       active = false;
+
       status.textContent = "Match Over!";
       score.textContent = `You: ${msg.you} | Opponent: ${msg.opp}`;
+
       playAgainBtn.classList.remove("hidden");
+      backBtn.classList.remove("hidden"); // ✅ show again
     }
   };
 
   ws.onclose = () => {
     active = false;
+    status.textContent = "Disconnected";
+
+    backBtn.classList.remove("hidden"); // ✅ safe exit
   };
 }
 
@@ -97,7 +115,7 @@ function teleport() {
 
 function glow() {
   btn.classList.remove("glow");
-  void btn.offsetWidth; // restart animation
+  void btn.offsetWidth;
   btn.classList.add("glow");
 }
 
@@ -137,16 +155,13 @@ btn.addEventListener("click", (e) => {
 });
 
 /* =========================================================
-   PLAY AGAIN && BACK TO ARCADE
+   PLAY AGAIN & BACK TO ARCADE
 ========================================================= */
 
 playAgainBtn.onclick = () => {
   if (ws) ws.close();
   connect();
 };
-
-
-const backBtn = document.getElementById("backBtn");
 
 backBtn.onclick = () => {
   window.location.href = "/";

@@ -54,9 +54,9 @@ body {
   font-weight: 600;
   color: #111827;
 
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e5e7eb;
+ background: #fed7aa; /* peach */
+  border-radius: 20px;
+  border: 2px solid #fb923c;
 
   box-shadow:
     0 10px 20px rgba(0,0,0,0.08),
@@ -119,16 +119,51 @@ body {
   }
 }
 
-/* ================= PLAY AGAIN ================= */
-#playAgain {
-  margin: 12px auto;
+/* ================= ACTION BUTTONS ================= */
+.actionButtons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding-bottom: 16px;
+}
+
+.actionBtn {
   padding: 14px 28px;
-  font-size: 20px;
-  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 12px;
   border: none;
+  cursor: pointer;
+
+  background: #ffffff;
+  color: #374151;
+
+  box-shadow:
+    0 8px 16px rgba(0,0,0,0.15);
+
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.actionBtn:hover {
+  transform: translateY(-2px);
+}
+
+.actionBtn:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.18);
+}
+
+/* Primary button (Play Again) */
+#playAgain {
   background: #4caf50;
   color: white;
-  cursor: pointer;
+}
+
+/* Secondary button (Back to Arcade) */
+#backBtn {
+  background: #fde68a;
+  color: #7c2d12;
 }
 
 .hidden {
