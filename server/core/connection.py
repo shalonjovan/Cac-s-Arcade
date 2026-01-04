@@ -1,15 +1,35 @@
-connected = set()
-player_room = {}
-player_game = {}  # ws -> game name or None
+# server/core/connection.py
+
+connected = {}      # player_id -> ws
+player_room = {}    # ws -> room
+player_game = {}    # ws -> game_name or None
 
 
-async def register(ws):
-    connected.add(ws)
+async def register(ws, player_id: str):
+    """
+    Register a player by ID.
+    If the same player reconnects, replace the old socket.
+    """
+    # If player reconnects, drop old ws
+    if player_id in connected:
+        old_ws = connected[player_id]
+        player_room.pop(old_ws, None)
+        player_game.pop(old_ws, None)
+
+    connected[player_id] = ws
     player_game[ws] = None
 
 
 async def unregister(ws):
-    connected.discard(ws)
+    """
+    Remove ws from tracking.
+    """
+    # Remove from connected dict
+    for pid, sock in list(connected.items()):
+        if sock is ws:
+            connected.pop(pid)
+            break
+
     player_room.pop(ws, None)
     player_game.pop(ws, None)
 

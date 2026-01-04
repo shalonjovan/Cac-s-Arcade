@@ -1,49 +1,97 @@
-const name = localStorage.getItem("playerName");
-if (!name) location.href = "/";
+/* =========================================================
+   PRE-CONDITION: NAME + PLAYER ID MUST EXIST
+========================================================= */
 
-const ws = new WebSocket(
-  location.protocol === "https:"
-    ? `wss://${location.host}/ws`
-    : `ws://${location.host}/ws`
-);
+const playerName = localStorage.getItem("playerName");
+
+// stable player identity
+let playerId = localStorage.getItem("playerId");
+if (!playerId) {
+  playerId = crypto.randomUUID();
+  localStorage.setItem("playerId", playerId);
+}
+
+if (!playerName) {
+  window.location.href = "/";
+}
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
 const boardDiv = document.getElementById("board");
-const status = document.getElementById("status");
+const status   = document.getElementById("status");
 const playAgain = document.getElementById("playAgain");
+const backBtn   = document.getElementById("back");
 
+/* =========================================================
+   STATE
+========================================================= */
+
+let ws = null;
 let myTurn = false;
 
-ws.onopen = () => {
-  ws.send(JSON.stringify({
-    type: "join",
-    game: "tictactoe",
-    name
-  }));
-};
+/* =========================================================
+   WEBSOCKET
+========================================================= */
 
-ws.onmessage = (e) => {
-  const msg = JSON.parse(e.data);
+function connect() {
+  ws = new WebSocket(
+    location.protocol === "https:"
+      ? `wss://${location.host}/ws`
+      : `ws://${location.host}/ws`
+  );
 
-  if (msg.type === "start") {
-    myTurn = msg.your_turn;
-    render(msg.board);
-    status.textContent = myTurn ? "Your turn" : "Opponent's turn";
-  }
+  ws.onopen = () => {
+    // 🔐 REQUIRED HANDSHAKE
+    ws.send(JSON.stringify({
+      player_id: playerId
+    }));
 
-  if (msg.type === "update") {
-    myTurn = msg.your_turn;
-    render(msg.board);
-    status.textContent = myTurn ? "Your turn" : "Opponent's turn";
-  }
+    // join game
+    ws.send(JSON.stringify({
+      type: "join",
+      game: "tictactoe",
+      name: playerName
+    }));
 
-  if (msg.type === "end") {
-    status.textContent =
-      msg.result === "win" ? "You Win!" :
-      msg.result === "lose" ? "You Lose!" :
-      "Draw!";
-    playAgain.classList.remove("hidden");
-  }
-};
+    status.textContent = "Waiting for opponent…";
+    playAgain.classList.add("hidden");
+  };
+
+  ws.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+
+    if (msg.type === "start") {
+      myTurn = msg.your_turn;
+      render(msg.board);
+      status.textContent = myTurn ? "Your turn" : "Opponent's turn";
+    }
+
+    if (msg.type === "update") {
+      myTurn = msg.your_turn;
+      render(msg.board);
+      status.textContent = myTurn ? "Your turn" : "Opponent's turn";
+    }
+
+    if (msg.type === "end") {
+      status.textContent =
+        msg.result === "win"  ? "You Win!" :
+        msg.result === "lose" ? "You Lose!" :
+        "Draw!";
+
+      playAgain.classList.remove("hidden");
+    }
+  };
+
+  ws.onclose = () => {
+    status.textContent = "Disconnected";
+  };
+}
+
+/* =========================================================
+   RENDER BOARD
+========================================================= */
 
 function render(board) {
   boardDiv.innerHTML = "";
@@ -65,11 +113,21 @@ function render(board) {
   });
 }
 
+/* =========================================================
+   BUTTONS
+========================================================= */
 
-playAgain.onclick = () => location.reload();
-
-const backBtn = document.getElementById("back");
+playAgain.onclick = () => {
+  if (ws) ws.close();
+  connect();
+};
 
 backBtn.onclick = () => {
   window.location.href = "/";
 };
+
+/* =========================================================
+   START
+========================================================= */
+
+connect();

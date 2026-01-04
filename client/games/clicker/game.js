@@ -1,8 +1,15 @@
 /* =========================================================
-   PRE-CONDITION: NAME MUST EXIST
+   PRE-CONDITION: NAME + PLAYER ID MUST EXIST
 ========================================================= */
 
 const playerName = localStorage.getItem("playerName");
+
+// generate once, persist forever
+let playerId = localStorage.getItem("playerId");
+if (!playerId) {
+  playerId = crypto.randomUUID();
+  localStorage.setItem("playerId", playerId);
+}
 
 if (!playerName) {
   window.location.href = "/";
@@ -45,6 +52,12 @@ function connect() {
   );
 
   ws.onopen = () => {
+    // 🔐 REQUIRED HANDSHAKE (DO NOT REMOVE)
+    ws.send(JSON.stringify({
+      player_id: playerId
+    }));
+
+    // join game
     ws.send(JSON.stringify({
       type: "join",
       game: "clicker",
@@ -56,7 +69,7 @@ function connect() {
     score.textContent = "";
 
     playAgainBtn.classList.add("hidden");
-    backBtn.classList.remove("hidden"); // ✅ allowed to leave
+    backBtn.classList.remove("hidden");
   };
 
   ws.onmessage = (e) => {
@@ -79,7 +92,7 @@ function connect() {
       score.textContent = `You: ${msg.you} | Opponent: ${msg.opp}`;
 
       playAgainBtn.classList.remove("hidden");
-      backBtn.classList.remove("hidden"); // ✅ show again
+      backBtn.classList.remove("hidden");
     }
   };
 
@@ -87,7 +100,7 @@ function connect() {
     active = false;
     status.textContent = "Disconnected";
 
-    backBtn.classList.remove("hidden"); // ✅ safe exit
+    backBtn.classList.remove("hidden");
   };
 }
 
@@ -102,11 +115,8 @@ function teleport() {
   const maxX = Math.max(0, fieldRect.width  - btnRect.width);
   const maxY = Math.max(0, fieldRect.height - btnRect.height);
 
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
-
-  btn.style.left = `${x}px`;
-  btn.style.top  = `${y}px`;
+  btn.style.left = `${Math.random() * maxX}px`;
+  btn.style.top  = `${Math.random() * maxY}px`;
 }
 
 /* =========================================================

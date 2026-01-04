@@ -1,3 +1,7 @@
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
 const nameScreen = document.getElementById("nameScreen");
 const lobby = document.getElementById("lobby");
 const nameInput = document.getElementById("nameInput");
@@ -7,7 +11,21 @@ const totalOnline = document.getElementById("totalOnline");
 const lobbyCount = document.getElementById("lobbyCount");
 const gamesDiv = document.getElementById("games");
 
+/* =========================================================
+   PLAYER IDENTITY (CRITICAL)
+========================================================= */
+
+let playerId = localStorage.getItem("playerId");
+if (!playerId) {
+  playerId = crypto.randomUUID();
+  localStorage.setItem("playerId", playerId);
+}
+
 const savedName = localStorage.getItem("playerName");
+
+/* =========================================================
+   STATE
+========================================================= */
 
 let ws = null;
 
@@ -16,9 +34,10 @@ const GAMES = [
   { id: "tictactoe", name: "❌⭕ Tic Tac Toe" }
 ];
 
-/* --------------------------------------------------
+/* =========================================================
    AUTO SKIP NAME SCREEN IF NAME EXISTS
--------------------------------------------------- */
+========================================================= */
+
 if (savedName) {
   nameInput.value = savedName;
   nameScreen.classList.add("hidden");
@@ -26,9 +45,10 @@ if (savedName) {
   connect();
 }
 
-/* --------------------------------------------------
+/* =========================================================
    START BUTTON
--------------------------------------------------- */
+========================================================= */
+
 startBtn.onclick = () => {
   const name = nameInput.value.trim();
   if (!name) return;
@@ -41,11 +61,12 @@ startBtn.onclick = () => {
   connect();
 };
 
-/* --------------------------------------------------
+/* =========================================================
    WEBSOCKET
--------------------------------------------------- */
+========================================================= */
+
 function connect() {
-  // 🔥 prevent duplicate connections
+  // prevent duplicate connections
   if (ws && ws.readyState === WebSocket.OPEN) return;
 
   ws = new WebSocket(
@@ -54,9 +75,18 @@ function connect() {
       : `ws://${location.host}/ws`
   );
 
+  ws.onopen = () => {
+    // 🔥 REQUIRED handshake for correct online counts
+    ws.send(JSON.stringify({
+      player_id: playerId
+    }));
+  };
+
   ws.onmessage = (e) => {
     const msg = JSON.parse(e.data);
-    if (msg.type === "stats") renderStats(msg);
+    if (msg.type === "stats") {
+      renderStats(msg);
+    }
   };
 
   ws.onclose = () => {
@@ -64,9 +94,10 @@ function connect() {
   };
 }
 
-/* --------------------------------------------------
+/* =========================================================
    RENDER LOBBY
--------------------------------------------------- */
+========================================================= */
+
 function renderStats(stats) {
   totalOnline.textContent = stats.total_online;
   lobbyCount.textContent = stats.lobby;

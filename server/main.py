@@ -3,7 +3,13 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from server.core.connection import register, unregister, player_room, player_game, stats
+from server.core.connection import (
+    register,
+    unregister,
+    player_room,
+    player_game,
+    stats
+)
 from server.core.matchmaking import try_match
 from server.core.registry import GAMES
 
@@ -18,9 +24,6 @@ CLIENT_DIR = BASE_DIR / "client"
 # ------------------------------------------------------------------
 # Static files
 # ------------------------------------------------------------------
-# This serves:
-# /static/...  -> JS, CSS, assets
-# /games/...   -> game-specific static files
 app.mount(
     "/static",
     StaticFiles(directory=CLIENT_DIR),
@@ -28,14 +31,14 @@ app.mount(
 )
 
 # ------------------------------------------------------------------
-# Arcade lobby (root)
+# Arcade lobby
 # ------------------------------------------------------------------
 @app.get("/", include_in_schema=False)
 async def arcade():
     return FileResponse(CLIENT_DIR / "index.html")
 
 # ------------------------------------------------------------------
-# Game pages (e.g. /games/clicker/)
+# Game pages
 # ------------------------------------------------------------------
 @app.get("/games/{game}/", include_in_schema=False)
 async def serve_game(game: str):
@@ -45,18 +48,27 @@ async def serve_game(game: str):
     return FileResponse(CLIENT_DIR / "index.html")
 
 # ------------------------------------------------------------------
-# WebSocket endpoint (shared for ALL games)
+# WebSocket endpoint
 # ------------------------------------------------------------------
 @app.websocket("/ws")
 async def websocket_endpoint(ws: WebSocket):
     await ws.accept()
-    await register(ws)
+
+    # First message MUST contain player_id
+    hello = await ws.receive_json()
+    player_id = hello.get("player_id")
+
+    if not player_id:
+        await ws.close()
+        return
+
+    await register(ws, player_id)
 
     async def broadcast_stats():
         payload = {"type": "stats", **stats()}
-        for c in list(player_game.keys()):
+        for sock in list(player_game.keys()):
             try:
-                await c.send_json(payload)
+                await sock.send_json(payload)
             except:
                 pass
 
@@ -66,11 +78,10 @@ async def websocket_endpoint(ws: WebSocket):
         while True:
             msg = await ws.receive_json()
 
-            # -------------------- JOIN GAME --------------------
+            # ---------------- JOIN GAME ----------------
             if msg.get("type") == "join":
                 game_name = msg["game"]
                 game = GAMES.get(game_name)
-
                 if not game:
                     continue
 
@@ -83,7 +94,7 @@ async def websocket_endpoint(ws: WebSocket):
                         player_room[p] = room
                     await game.on_start(room)
 
-            # -------------------- GAME MESSAGE --------------------
+            # ---------------- GAME MESSAGE ----------------
             else:
                 room = player_room.get(ws)
                 if room:
