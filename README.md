@@ -9,7 +9,7 @@ https://cac-s-arcade.onrender.com/
 
 ---
 
-## 🚀 What is Cac’s Arcade?
+## What is Cac’s Arcade?
 
 Cac’s Arcade is a central multiplayer lobby where players can:
 - Enter with a name
@@ -21,7 +21,7 @@ The entire system runs on a **single WebSocket server**, shared across all games
 
 ---
 
-## 🕹️ Current Games
+## Current Games
 
 ### 🔥 Clicker
 A fast-paced reflex game where two players compete to click as fast as possible within a time limit.
@@ -31,7 +31,7 @@ A real-time 2-player Tic Tac Toe game with proper turn handling and matchmaking.
 
 ---
 
-## 🧠 Architecture Overview
+## Architecture Overview
 
 - **Single WebSocket endpoint** for all games
 - **Central matchmaking system**
@@ -48,7 +48,7 @@ Everything else (connections, stats, matchmaking) is shared.
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - **Python**
 - **FastAPI**
@@ -59,7 +59,7 @@ No frameworks on the frontend — everything is built with vanilla JS for clarit
 
 ---
 
-## 📊 Features
+## Features
 
 - Real-time player count
 - Per-game activity tracking
